@@ -1,11 +1,12 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Card from '../components/Card.astro';
+import NavBar from "../components/NavBar.astro";
 
 let allPosts = await Astro.glob('./blog/posts/*.md');
 
 ---
-<Layout title="Welcome to Blog.">
+<Layout title="Blog">
 	<main>
 		<ul role="list" class="link-card-grid">
 			{allPosts.map(p => 
