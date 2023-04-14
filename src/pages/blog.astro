@@ -1,10 +1,10 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Card from '../components/Card.astro';
-import NavBar from "../components/NavBar.astro";
+import Layout from '../layouts/Layout.astro'
+import Card from '../components/Card.astro'
 
-let allPosts = await Astro.glob('./blog/posts/*.md');
+let allPosts = await Astro.glob('./blog/posts/*.md')
 
+allPosts = allPosts.filter(x => !x.frontmatter.draft)
 ---
 <Layout title="Blog">
 	<main>
@@ -13,7 +13,7 @@ let allPosts = await Astro.glob('./blog/posts/*.md');
             <Card 
                 href={p.url}
                 title={p.frontmatter.title}
-                body={p.url} 
+                body={p.frontmatter.author+" "+p.frontmatter.date} 
             />)}
 		</ul>
 	</main>
