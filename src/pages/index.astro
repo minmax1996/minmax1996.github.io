@@ -1,17 +1,33 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import Card from "../components/Card.astro";
-import LinksRow from "../components/LinksRow.astro";
-import NavBar from "../components/NavBar.astro";
 ---
 
 <Layout title="Intro">
 	<main>
-		<div class="container">
-			<h1 class="item">Maxim Minaev</h1>
-			<img class="item" src="/profile_photo.jpeg"/>
-			<LinksRow class="item"/>
-		</div>
+		<div class="py-8 px-8 max-w-sm mx-auto bg-white rounded-xl shadow-lg space-y-2 sm:py-4 sm:flex sm:items-center sm:space-y-0 sm:space-x-6">
+			<img class="block mx-auto h-24 rounded-full sm:mx-0 sm:shrink-0" src="/profile_photo.jpeg" alt="Woman's Face">
+			<div class="text-center space-y-2 sm:text-left">
+			  <div class="space-y-0.5">
+				<p class="text-lg text-black font-semibold">
+				  Maxim Minaev
+				</p>
+				<p class="text-slate-500 font-medium">
+				  Software Engineer
+				</p>
+			  </div>
+			  <div class="grid grid-cols-5">
+				<a href="https://github.com/minmax1996" class="content-link">
+					<img class="rounded-full sm:mx-0 sm:shrink-0" src="/github-icon.png" />
+				</a>
+				<a href="https://www.linkedin.com/in/maxim-minaev-692455175" class="content-link">
+					<img class="rounded-full sm:mx-0 sm:shrink-0"  src="/li-icon.png" />
+				</a>
+				<a href="https://www.facebook.com/profile.php?id=100008498891308" class="content-link">
+					<img class="rounded-full sm:mx-0 sm:shrink-0" src="/fb-icon.png" />
+				</a>
+			</div>			
+			</div>
+		  </div>
 	</main>
 </Layout>
 
@@ -20,27 +36,5 @@ import NavBar from "../components/NavBar.astro";
 		margin: auto;
 		padding: 1.5rem;
 		max-width: 60ch;
-	}
-	h1 {
-		font-size: 3rem;
-		font-weight: 800;
-		margin: 0;
-	}
-	.container {
-		flex-wrap: wrap;
-		justify-content: center;
-		align-items: center;
-	}
-	h1.item{
-		font-size: 3rem;
-		text-align: center;
-		padding-bottom: 30px;
-	}
-	img.item {
-		width: min(50%, 300px);
-		height: auto;
-		border-radius: 50%;
-		display: block;
-  		margin: 0 auto;
 	}
 </style>
