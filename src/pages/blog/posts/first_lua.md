@@ -4,6 +4,7 @@ title: "Что такое Lua и с чем его едят"
 author: "Maxim Minaev"
 date: "14 Apr 2023"
 draft: false
+lang: ru
 ---
 # Что такое Lua и с чем его едят
 

@@ -2,9 +2,9 @@
 import Layout from '../layouts/Layout.astro'
 import Card from '../components/Card.astro'
 
+let currentLang = "ru"
 let allPosts = await Astro.glob('./blog/posts/*.md')
-
-allPosts = allPosts.filter(x => !x.frontmatter.draft)
+allPosts = allPosts.filter(x => !x.frontmatter.draft && x.frontmatter.lang == currentLang)
 ---
 <Layout title="Blog">
 	<main>
