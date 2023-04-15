@@ -90,6 +90,8 @@ print(res) -- 1098765
 
 в Lua есть встроенные функции ipairs и pairs возвращающие итераторы для таблицы
 
+ipairs обычно используется для массивов, а pairs для всего остального
+
 ```lua
 local a = {1,2,3}
 -- print all values of array `a'
@@ -258,6 +260,48 @@ local a = nil
 print(a, b, string.find("Hello", "World")) -- nil	nil	nil
 ```
 
+### function
+
+
+```lua
+local function max(a,b)
+	if a > b then
+		return a
+	else
+		return b
+	end
+end
+```
+
+функцию можно присвоить переменой
+
+```lua
+local max = function(a,b)
+	if a > b then
+		return a
+	else
+		return b
+	end
+end
+```
+
+и определить неопределенное кол-во аргументов
+
+```lua
+function max(...)
+	local args = {...}
+	maxval = args[1]
+	for i,v in ipairs(args) do
+		if v > maxval then
+			maxval = v
+		end
+	end
+	return maxval
+end
+print(max(1,3,5,10)) -- 10
+print(max()) -- nil
+```
+
 ### table
 
 Таблицы в Lua объединяют в себе словари, массивы, объекты
@@ -265,10 +309,8 @@ print(a, b, string.find("Hello", "World")) -- nil	nil	nil
 начнем с массивов: посчитаем первые 5 чисел Фиббоначи
 
 ```lua
-local fib = {} -- создание таблицы
-fib[1] = 1 -- индексация начинается с 1
-fib[2] = 1 
-for i = 3,5,1 do --(i = 3, i < 5, i = i + 1)
+local fib = {1, 1} -- создание таблицы
+for i = 3,5,1 do --(i = 3, i <= 5, i = i + 1)
 	-- с помощью #fib можно узнать текущую длину массива
 	fib[#fib+1] = fib[#fib] + fib[#fib-1]
 end
@@ -313,49 +355,6 @@ dog:feed()
 dog:bark() -- happy bark
 ```
 
-#### function
-
-Функции тоже являются базовым типом и на них так же как на переменные распространяется определение глобальности, т.е. функции бывают глобальными и локальными
-и так же как с переменными, начинают действовать с объявления
-
-```lua
-local function max(a,b)
-	if a > b then
-		return a
-	else
-		return b
-	end
-end
-```
-
-функцию можно присвоить переменой
-
-```lua
-local max = function(a,b)
-	if a > b then
-		return a
-	else
-		return b
-	end
-end
-```
-
-и определить неопределенное кол-во аргументов
-
-```lua
-function max(...)
-	local args = {...}
-	maxval = args[1]
-	for i,v in ipairs(args) do
-		if v > maxval then
-			maxval = v
-		end
-	end
-	return maxval
-end
-print(max(1,3,5,10)) -- 10
-print(max()) -- nil
-```
 
 ### thread
 
