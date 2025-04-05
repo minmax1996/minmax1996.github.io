@@ -1,17 +1,17 @@
 ---
 layout: "../../../layouts/BlogPostLayout.astro"
-title: "Первый биндинг для Lua"
+title: "Your First Lua Binding"
 author: "Maxim Minaev"
 date: "28 Nov 2024"
 draft: false
-lang: ru
+lang: en
 ---
-# Первый биндинг для Lua
+# Your First Lua Binding
 
-Создание своих биндингов — это способ связать разные языки программирования, чтобы использовать возможности одного языка в другом. Например, можно подключить функционал Go-приложения к Lua-скриптам. Сегодня я расскажу, как написать свои биндинги 2 разными способами.
+Creating your own bindings is a way to connect different programming languages, allowing you to use the capabilities of one language in another. For example, you can connect the functionality of a Go application to Lua scripts. Today, I'll show you how to write your own bindings in two different ways.
 
-# Подготовка
- Предположим у вас есть программа, которая делает какую-то специфичную логику, и имеет какой-то интерфейс, предположим она считает sha256 от query параметров по заданной логике:
+# Preparation
+Let's assume you have a program that performs some specific logic and has an interface. Suppose it calculates the sha256 hash of query parameters according to a given logic:
 ```go
  //lib.go
  func sha256Raw(input string) string {
@@ -26,7 +26,7 @@ lang: ru
 	return hex.EncodeToString(hash.Sum(nil))
 }
 ```
-и есть такой main
+and there's a `main` like this:
 ```go
 //main.go
 package main
@@ -54,28 +54,28 @@ func main() {
 	}
 }
 ```
-Билдим и устанавливаем в `/usr/local/bin/` чтобы наша программа была доступна везде
+Build and install it in `/usr/local/bin/` so our program is available everywhere:
 ```bash
 $ go build -o hasher .
 $ cp hasher /usr/local/bin/hasher
 ```
-Теперь у нас есть бинарник hasher который можно использовать так:
+Now we have a `hasher` binary that can be used like this:
 ```bash
 $ hasher -algorithm sha256_raw -input 'https://example.com/some/link?q1=1&q2=2&g=3'
 ca2a598def71c556327b531e2be48fbba879e2d596acdb60006b6ff4626dec2d
 ```
-# Переходим к Lua
-Для начала посмотрим на самый простой биндинг: как обертку вокруг cli команды и ее аргументов.
+# Moving on to Lua
+First, let's look at the simplest binding: a wrapper around a CLI command and its arguments.
 
-Наш интерфейс — это hasher с 2 обязательным параметрами-флагами `algorithm` и `input`, который возвращает результирующую строку.
-> Тут и дальше, я буду использовать `test.lua` как один из вариантов использования:
+Our interface is `hasher` with two mandatory flag parameters, `algorithm` and `input`, which returns the resulting string.
+> From here on, I'll use `test.lua` as one of the usage examples:
 ```lua
 -- test.lua
 local hasherbinding = require("hasherbinding")
 print(hasherbinding.hash("sha256_raw", "https://example.com/some/link?q1=1&q2=2&g=3")) -- Should print ca2a598def71c556327b531e2be48fbba879e2d596acdb60006b6ff4626dec2d`
 ```
 
-Начнем с создания самого простого модуля `hasherbinder` на Lua:
+Let's start by creating the simplest Lua module, `hasherbinder`:
 ```lua
 -- hasherbinder.lua
 local hasherbinder = {}
@@ -86,8 +86,8 @@ end
 
 return hasherbinder
 ```
-На данном этапе он только возвращает строку `"result"`. Добавим вызов [io.popen](https://www.lua.org/manual/5.4/manual.html#pdf-io.popen) со строкой вызова с параметрами, и прочитаем ответ.
-В итоге наш `hasherbinder.lua` будет выглядеть примерно так:
+At this stage, it only returns the string `"result"`. Let's add a call to [io.popen](https://www.lua.org/manual/5.4/manual.html#pdf-io.popen) with the command string and parameters, and read the response.
+Ultimately, our `hasherbinder.lua` will look something like this:
 ```lua
 -- hasherbinder.lua
 local hasherbinder = {}
@@ -103,23 +103,23 @@ end
 
 return hasherbinder
 ```
-запустим `test.lua` и проверим работу:
+Run `test.lua` and check the result:
 ```
 $ lua test.lua
 ca2a598def71c556327b531e2be48fbba879e2d596acdb60006b6ff4626dec2d
 ```
-## Итог
-У нас получилось выполнить код написанный на Go из Lua, через собранный бинарник.
+## Outcome
+We managed to execute Go code from Lua using the compiled binary.
 
-Но... нам же этого мало??
-# Let’s go down the rabbit hole
+But... that's not enough for us, right?
+# Let's go down the rabbit hole
 
-Предположим, мы не хотим использовать cli для вызова всего бинарника, а хотим вызывать определенные методы напрямую и **у нас есть доступ к коду**. Чтобы решить эту проблему можно собрать **C-Shared-Library** с помощью cgo.
+Suppose we don't want to use the CLI to call the entire binary, but want to call specific methods directly, and **we have access to the source code**. To solve this problem, we can build a **C-Shared-Library** using cgo.
 
-> Небольшой дисклеймер: все что происходит дальше было выполнено на MacOS, с версией Lua 5.4.7. На других операционных системах и версиях могут отличаться пути, к либам и хедерам. Как устанавливать gcc и где найти хедеры и либы Lua, я пожалуй опущу из повествования. 
+> Small disclaimer: Everything that follows was done on MacOS with Lua version 5.4.7. Paths to libraries and headers might differ on other operating systems and versions. I'll omit the details on how to install gcc and where to find Lua headers and libraries.
 
-Ну, продолжим…
-Предположим в нашем коде на Go есть еще один метод, который мы хотим открыть для использования:
+Well, let's continue…
+Suppose our Go code has another method we want to expose:
 ```go
 //lib.go
 func doubleMd5Sorted(input string) string {
@@ -148,15 +148,15 @@ func doubleMd5Sorted(input string) string {
 }
 ```
 
-Изменим наш `test.lua` чтобы вызывать оба метода:
+Let's modify our `test.lua` to call both methods:
 ```lua
 -- test.lua
 local hasherbinding = require("hasherbinding")
-print(hasherbinding.sha256_raw("https://example.com/some/link?q1=1&q2=2&g=3") -- Should print ca2a598def71c556327b531e2be48fbba879e2d596acdb60006b6ff4626dec2d
+print(hasherbinding.sha256_raw("https://example.com/some/link?q1=1&q2=2&g=3")) -- Should print ca2a598def71c556327b531e2be48fbba879e2d596acdb60006b6ff4626dec2d
 print(hasherbinding.double_md5_sorted("https://example.com/some/link?q1=1&q2=2&g=3")) -- Should print 72df8c4cc5ae9c072fc101de65124298
 ```
 
-Добавим к нашему проекту файл `cgo.go` и определим в нем экспортируемые функции
+Add a `cgo.go` file to our project and define the exported functions in it:
 ```go
 //cgo.go
 package main
@@ -177,28 +177,27 @@ func Sha256Raw(input *C.char) *C.char {
 	return C.CString(result)
 }
 ```
-> Note: в этих методах мы конвертируем Си-шные строки (`*char`) в гошные строки и обратно. По хорошему, память под `C.CString` надо вручную освобождать с помощью `C.free`, но т.к. именно тут результат будет использован в другом месте, то освободим ее уже там.
+> Note: In these methods, we convert C strings (`*C.char`) to Go strings and back. Ideally, the memory allocated for `C.CString` should be freed manually using `C.free`, but since the result will be used elsewhere here, we'll free it there.
 
- Сбилдим из проекта **C Shared Library**
-```
+Build a **C Shared Library** from the project:
+```bash
 go build -o lib/libhasher.so -buildmode=c-shared .
 ```
-на выходе в папке `lib` у нас появилось 2 файла `libhasher.h` и `libhasher.so` 
-они нам понадобятся для того чтобы написать binder к Lua уже на языке C.
-`libhasher.so` Мы установим в `/usr/local/lib/`
-```
+In the output `lib` folder, we now have two files: `libhasher.h` and `libhasher.so`.
+We'll need these to write the Lua binder in C.
+Install `libhasher.so` into `/usr/local/lib/`:
+```bash
 sudo cp lib/libhasher.so /usr/local/lib/libhasher.so
 ```
 
-Чтобы ОС видела, где находятся либы, надо не забыть добавить папку /usr/local/lib в `DYLD_LIBRARY_PATH` или `LD_LIBRARY_PATH` если еще нет. Это поможет нам в будущем не прописывать все пути к пользовательским библиотекам.
-```
+To ensure the OS knows where the libraries are, don't forget to add the `/usr/local/lib` directory to `DYLD_LIBRARY_PATH` or `LD_LIBRARY_PATH` if it's not already there. This will save us from having to specify full paths to custom libraries in the future.
+```bash
 $ export DYLD_LIBRARY_PATH=/usr/local/lib:$DYLD_LIBRARY_PATH
 $ export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 ```
-## Перейдем к написанию самого биндера
+## Let's write the binder itself
 
-Создадим директорию src/ и положим туда наш хедер файл  `libhasher.h` , а рядом
-Создадим `hasherbinding.c` в котором опишем наш модуль для Lua на языке C:
+Create a `src/` directory and place our header file `libhasher.h` there. Next to it, create `hasherbinding.c` where we describe our Lua module in C:
 ```c
 #include <lua.h>
 #include <lauxlib.h>
@@ -208,7 +207,7 @@ int lua_sha256_raw(lua_State *L) {
     const char* str = luaL_checkstring(L, 1);
     char* result = Sha256Raw((char*)str);
     lua_pushstring(L, result);
-    free(result);
+    free(result); // Free the C string allocated by C.CString
     return 1;
 }
 
@@ -216,7 +215,7 @@ int lua_double_md5_sorted(lua_State *L) {
     const char* str = luaL_checkstring(L, 1);
     char* result = DoubleMd5Sorted((char*)str);
     lua_pushstring(L, result);
-    free(result);
+    free(result); // Free the C string allocated by C.CString
     return 1;
 }
 
@@ -232,38 +231,39 @@ int luaopen_hasherbinding(lua_State *L) {
 }
 ```
 
-Главная магия тут происходит в функции `luaopen_hasherbinding`: когда интерпретатор Lua пытается подключить модуль через `require("mymodule")`, он ищет shared libraries и пытается найти функцию `luaopen_<module_name>` чтобы проинициализировать модуль `<module_name>`. В нашем случае, используя Lua C API и с помощью `lua_State *L` инициализируем 2 функции нашего модуля, которые уже и занимаются основной логикой. 
+The main magic happens in the `luaopen_hasherbinding` function: when the Lua interpreter tries to load a module via `require("mymodule")`, it looks for shared libraries and tries to find the function `luaopen_<module_name>` to initialize the `<module_name>` module. In our case, using the Lua C API and `lua_State *L`, we initialize the two functions of our module, which handle the core logic.
 
-Сбилдим же наш биндер и проверим результат
-```
-gcc -shared -o hasherbinding.so \ 
+Let's build our binder and check the result:
+```bash
+gcc -shared -o hasherbinding.so \
 	-fPIC src/hasherbinding.c \
 	-I/opt/homebrew/Cellar/lua/5.4.7/include/lua5.4 \
 	-L/opt/homebrew/Cellar/lua/5.4.7/lib \
 	-llua -lhasher
 ```
-Что же тут происходит:
-- `src/hasherbinding.c` и  `-o hasherbinding.so` какой именно файл нужно компилировать и куда положить результат
-- `-shared` и `-fPIC` говорят компилятору что нужно скомпилировать shared library и что нам нужен Position-Independent Code, те тот который может быть загружен в память без изменений (необходимо для shared)
-- `-I/opt/homebrew/Cellar/lua/5.4.7/include/lua5.4` говорит где найти header файлы `lua.h` и `lauxlib.h` в `#include`
-- `-L/opt/homebrew/Cellar/lua/5.4.7/lib` говорит где найти либы определенные в header файлах
-- `-llua` и `-lhasher` говорят какие именно либы нужно искать, и тк мы добавили `/usr/local/lib` в `LD_LIBRARY_PATH` то hasher мы найдем именно там
+What's happening here:
+- `src/hasherbinding.c` and `-o hasherbinding.so` specify which file to compile and where to put the result.
+- `-shared` and `-fPIC` tell the compiler to create a shared library and that we need Position-Independent Code (necessary for shared libraries), meaning code that can be loaded into memory without modification.
+- `-I/opt/homebrew/Cellar/lua/5.4.7/include/lua5.4` tells the compiler where to find the header files `lua.h` and `lauxlib.h` for the `#include` directives.
+- `-L/opt/homebrew/Cellar/lua/5.4.7/lib` tells the compiler where to find the libraries defined in the header files.
+- `-llua` and `-lhasher` specify which libraries to link. Since we added `/usr/local/lib` to `LD_LIBRARY_PATH`, `hasher` will be found there.
 
-## Проверим результат
-Посмотрим еще раз на `test.lua`:
+## Let's check the result
+Look at `test.lua` again:
 ```lua
+-- test.lua
 local hasher = require("hasherbinding")
-print(hasher.sha256_raw("https://example.com/some/link?q1=1&q2=2&g=3") -- Should print ca2a598def71c556327b531e2be48fbba879e2d596acdb60006b6ff4626dec2d
+print(hasher.sha256_raw("https://example.com/some/link?q1=1&q2=2&g=3")) -- Should print ca2a598def71c556327b531e2be48fbba879e2d596acdb60006b6ff4626dec2d
 print(hasher.double_md5_sorted("https://example.com/some/link?q1=1&q2=2&g=3")) -- Should print 72df8c4cc5ae9c072fc101de65124298
 ```
-и запустим:
+and run it:
 ```bash
-lua test.lua 
+lua test.lua
 ca2a598def71c556327b531e2be48fbba879e2d596acdb60006b6ff4626dec2d
 72df8c4cc5ae9c072fc101de65124298
 ```
-# Итог
+# Conclusion
 
-Написание биндингов открывает много новых возможностей: от интеграции языков до расширения функционала приложений. Итого у нас сегодня получилось написать самый простой биндер для Lua к программе написанной на Go.
+Writing bindings opens up many new possibilities, from integrating languages to extending application functionality. Today, we successfully wrote a simple Lua binder for a program written in Go.
 
-Полный репозиторий с кодом можно найти на https://github.com/minmax1996/luabindingtutorial
+The complete code repository can be found at https://github.com/minmax1996/luabindingtutorial
