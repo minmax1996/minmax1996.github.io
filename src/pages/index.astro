@@ -25,10 +25,20 @@ import Layout from "../layouts/Layout.astro";
 				<a href="https://www.facebook.com/profile.php?id=100008498891308" class="content-link">
 					<img class="rounded-full sm:mx-0 sm:shrink-0" src="/fb-icon.png" />
 				</a>
-			</div>			
+			</div>
 			</div>
 		  </div>
 	</main>
+	<section class="mt-8 px-8 max-w-sm mx-auto sm:max-w-xl"> <!-- Добавлен section с отступом и выравниванием -->
+		<h2 class="text-2xl text-black font-semibold mb-4 text-center sm:text-left">Projects</h2> <!-- Добавлен заголовок -->
+		<ul class="list-disc pl-5 space-y-2"> <!-- Добавлен список с отступами -->
+			<li>
+				<a href="https://wordle.minmax1996.me/wordle" class="text-blue-600 hover:underline" target="_blank">
+					Wordle Duel - a real-time multiplayer competitive game where you challenge random players in classic Wordle puzzles
+				</a>
+			</li>
+		</ul>
+	</section>
 </Layout>
 
 <style>
