@@ -12,7 +12,7 @@ export async function get() {
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     ${pages.map(({ url, changefreq, priority }) => `
     <url>
-        <loc>${SITE_URL}${url}</loc>
+        <loc>${SITE_URL}/${url}</loc>
         <changefreq>${changefreq}</changefreq>
         <priority>${priority}</priority>
     </url>
