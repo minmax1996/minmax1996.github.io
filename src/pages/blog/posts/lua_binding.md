@@ -11,7 +11,7 @@ lang: en
 Creating your own bindings is a way to connect different programming languages, allowing you to use the capabilities of one language in another. For example, you can connect the functionality of a Go application to Lua scripts. Today, I'll show you how to write your own bindings in two different ways.
 
 # Preparation
-Let's assume you have a program that performs some specific logic and has an interface. Suppose it calculates the sha256 hash of query parameters according to a given logic:
+Let's assume you have a program that performs specific logic and has an interface. Suppose it calculates the SHA-256 hash of query parameters according to a given logic:
 ```go
  //lib.go
  func sha256Raw(input string) string {
